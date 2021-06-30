@@ -64,7 +64,7 @@ Addition of partial products:
         adcs     sr3, sr3, xzr
         adcs     sr4, sr4, xzr
         adc      sr5, sr5, xzr
-        //x1sb1
+        //sa1sb1
         mul     tmp5, sa1, sb1
         umulh   tmp4, sa1, sb1
         adds    sr2, sr2, tmp5
@@ -145,41 +145,41 @@ Addition of partial products:
 Big integer squaring
 Addition of the partial products
 c: possible carry
-
-sr7	 	 |sr6	   |sr5		 |sr4		|sr3	  |sr2	    |sr1	  |sr0	    |
+sr7	 |sr6	   |sr5	     |sr4	|sr3	  |sr2	    |sr1      |sr0      |
 --------------------------------------------------------------------------------|
- 		 |		   |	 	 |			|		  |		    |sa0*sa0hi|sa0*sa0lo|
- 		 |		   |		 |			|		  |	c	  	|sa0*sa1lo|			|
- 		 |		   |		 |			|		  |	c	  	|sa0*sa1lo|			|
-		 |		   |		 |			|	c	  |sa0*sa1hi|		  |			|
-		 |		   |		 |			|	c	  |sa0*sa1hi|		  |			|
-		 |		   |		 |			|	c     |sa0*sa2lo|		  |			|
-		 |		   |		 |			|	c	  |sa0*sa2lo|		  |			|
-		 |		   |		 |			|	c	  |sa1*sa1lo|		  |			|
-		 |		   |		 |		c	|sa0*sa2hi|		  	|		  |			|
-		 |		   |		 |		c	|sa0*sa2hi|		  	|		  |			|
-		 |		   |		 |		c	|sa0*sa3lo|		  	|		  | 		|
-		 |		   |		 |		c	|sa0*sa3lo|		 	|		  | 		|
-		 |		   |		 |		c	|sa1*sa1hi|		  	|		  | 	 	|
-		 |		   |		 |		c	|sa1*sa2lo|		  	|		  |  		|
-		 |		   |		 |		c	|sa1*sa2lo|		 	|		  | 		|
-		 |		   |	c	 |sa0*sa3hi	|		  |		    |		  | 		|
-		 |		   |	c	 |sa0*sa3hi	|	      |		    |		  | 		|
-		 |		   |	c	 |sa1*sa2hi	|		  |		  	|		  | 		|
-		 |		   |	c	 |sa1*sa2hi	|		  |		  	|		  | 		|
-		 |		   |	c	 |sa1*sa3lo	|		  |		  	|		  | 		|
-		 |		   |	c	 |sa1*sa3lo	|		  |		  	|		  | 		|
-		 |		   |	c	 |sa2*sa2lo	|		  | 	    |		  | 		|
-		 | 	 c	   |sa1*sa3hi|			|		  |		    |		  | 		|
-		 |	 c	   |sa1*sa3hi|			|		  |		    |		  | 		|
-		 |	 c	   |sa2*sa2hi|			|		  |		    |		  | 		|
-		 | 	 c	   |sa2*sa3lo|			|		  |		    | 		  | 		|
-		 |	 c	   |sa2*sa3lo|			|		  |		    |		  | 		|
-	c	 |sa2*sa3hi|		 |			|		  |		    |		  | 		|
-	c	 |sa2*sa3hi|		 |			|		  |		    |		  | 	 	|
-	c	 |sa3*sa3lo|		 |			|		  |		    |		  | 	 	|
-sa3*sa3hi|		   |		 |			|		  |		    |		  | 		|
+	 |	   |	     |		|	  |	    |sa0*sa0hi|sa0*sa0lo|
+	 |	   |	     |		|	  |	c   |sa0*sa1lo|	        |
+	 |	   |	     |		|	  |	c   |sa0*sa1lo|	        |
+	 |	   |	     |		|  c	  |sa0*sa1hi|         |         |		
+	 |	   |	     |		|  c	  |sa0*sa1hi|         |         |		
+	 |	   |	     |		|  c      |sa0*sa2lo|         |         |				
+	 |	   |	     |	        |  c	  |sa0*sa2lo|         |         |		
+	 |	   |	     |		|  c	  |sa1*sa1lo|         |         |		
+	 |	   |	     |	c	|sa0*sa2hi|         |         |         |		 
+	 |	   |	     |	c	|sa0*sa2hi|         |         |         |		
+	 |	   |	     |	c	|sa0*sa3lo|         |         |         |		 
+	 |	   |	     |	c	|sa0*sa3lo|         |         |         |	
+	 |	   |	     |	c	|sa1*sa1hi|         |         |         |	  	
+	 |	   |	     |	c	|sa1*sa2lo|         |         |         |	  	
+	 |	   |	     |	c	|sa1*sa2lo|         |         |         |		 			   		
+	 |	   |	c    |sa0*sa3hi	|	  |         |         |         |		    		   	
+	 |	   |	c    |sa0*sa3hi	|	  |         |         |         |		    		   		
+	 |	   |	c    |sa1*sa2hi	|	  |         |         |         |		  			   		
+	 |	   |	c    |sa1*sa2hi	|	  |         |         |         |		  			   		
+	 |	   |	c    |sa1*sa3lo	|	  |         |         |         |		  			   		
+	 |	   |	c    |sa1*sa3lo	|	  |         |         |         |		  			   		
+	 |	   |	c    |sa2*sa2lo	|	  |         |         |         | 	     
+	 | 	c  |sa1*sa3hi|		|	  |         |         |         |		    
+	 |	c  |sa1*sa3hi|		|	  |         |         |         |		    
+	 |	c  |sa2*sa2hi|		|	  |         |         |         |		    
+	 | 	c  |sa2*sa3lo|		|	  |         |         |         |		     		   		
+	 |	c  |sa2*sa3lo|		|	  |         |         |         |	    		   		
+  c	 |sa2*sa3hi|         |		|	  |         |         |         |		    		   		
+  c	 |sa2*sa3hi|	     |		|	  |         |         |         |		    		   	 	
+  c	 |sa3*sa3lo|	     |		|	  |         |         |         |		    		   	 	
+sa3*sa3hi|	   |	     |		|	  |         |         |         |		    		   		
 --------------------------------------------------------------------------------|
+sr7	 |sr6	   |sr5	     |sr4	|sr3	  |sr2	    |sr1      |sr0      |
 */							
 
 .macro SQUARE_U256   
