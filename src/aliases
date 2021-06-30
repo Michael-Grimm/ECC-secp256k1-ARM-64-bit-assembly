@@ -1,0 +1,83 @@
+//Aliases for registers
+
+//Input/Output from/to calling C functions:
+io0 .req x0
+io1 .req x1
+io2 .req x2
+io3 .req x3
+
+//Scalar A
+sa0 .req x4
+sa1 .req x5
+sa2 .req x6
+sa3 .req x7
+
+//Scalar B
+sb0 .req x8
+sb1 .req x9
+sb2 .req x10
+sb3 .req x11
+
+//Scalar R, the result of big integer functions A ° B
+//The results reductions modulo p or n are in sr0-sr3
+sr0 .req x12
+sr1 .req x13
+sr2 .req x14
+sr3 .req x15
+sr4 .req x16
+sr5 .req x17
+sr6 .req x18
+sr7 .req x19
+
+/** Registers for the prime p of the curve */
+//Prime p = 2²⁵⁶ - c with c = 0x1000003d1
+pp0 .req x20 //0xfffffffefffffc2f
+pp1 .req x21 //0xffffffffffffffff
+
+//c of p, c = 0x1000003d1
+cop .req x22 
+
+//Scalar K, used in point multiplication
+sk0 .req x23
+sk1 .req x24
+sk2 .req x25
+sk3 .req x26
+
+/** Registers for the order n of the curve */
+//Order n = 2²⁵⁶ - d with d = 0x1 4551231950b75fc4 402da1732fc9bebf
+on0 .req x20 //0xbfd25e8cd0364141
+on1 .req x21 //0xbaaedce6af48a03b
+on2 .req x22 //0xfffffffffffffffe
+on3 .req x23 //0xffffffffffffffff
+
+//d of order n, don = 0x1 4551231950b75fc4 402da1732fc9bebf
+//don0 = 1, no register needed
+don1 .req x24 //0x4551231950b75fc4
+don2 .req x25 //0x402da1732fc9bebf
+
+//temporary used registers
+tmp0 .req x23
+tmp1 .req x24
+tmp2 .req x25 
+tmp3 .req x26
+tmp4 .req x27
+tmp5 .req x28
+
+
+
+
+//Callee-Saved-Registers
+csr0 .req x19
+csr1 .req x20
+csr2 .req x21
+csr3 .req x22
+csr4 .req x23
+csr5 .req x24
+csr6 .req x25
+csr7 .req x26
+csr8 .req x27
+csr9 .req x28
+
+//Frame pointer and procedure link register
+frmptr .req x29
+prclrg .req x30
