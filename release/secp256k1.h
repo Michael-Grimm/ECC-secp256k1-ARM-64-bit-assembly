@@ -1,5 +1,5 @@
 /**
- * Finite field and ecc arithmetic and on the secp256k1-curve im AArch64-assembly.
+ * Finite field and ecc arithmetic and on the secp256k1-curve in ARM 64-bit assembly.
  * Prime p is 2^256 - c,  with c = 0x1000003d1
  * (SEC 2, section 2.4.1: Recommended Elliptic Curve Domain Parameters,Certicom 
  * Research, 2010, Version 2.0).
