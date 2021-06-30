@@ -19,7 +19,7 @@ sb2 .req x10
 sb3 .req x11
 
 //Scalar R, the result of big integer functions A ° B
-//The results reductions modulo p or n are in sr0-sr3
+//and functions modulo p or n are in sr0-sr3
 sr0 .req x12
 sr1 .req x13
 sr2 .req x14
