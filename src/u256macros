@@ -145,41 +145,40 @@ Addition of partial products:
 Big integer squaring
 Addition of the partial products
 c: possible carry
-sr7	 |sr6	   |sr5	     |sr4	|sr3	  |sr2	    |sr1      |sr0      |
---------------------------------------------------------------------------------|
-	 |	   |	     |		|	  |	    |sa0*sa0hi|sa0*sa0lo|
-	 |	   |	     |		|	  |	c   |sa0*sa1lo|	        |
-	 |	   |	     |		|	  |	c   |sa0*sa1lo|	        |
-	 |	   |	     |		|  c	  |sa0*sa1hi|         |         |		
-	 |	   |	     |		|  c	  |sa0*sa1hi|         |         |		
-	 |	   |	     |		|  c      |sa0*sa2lo|         |         |				
-	 |	   |	     |	        |  c	  |sa0*sa2lo|         |         |		
-	 |	   |	     |		|  c	  |sa1*sa1lo|         |         |		
-	 |	   |	     |	c	|sa0*sa2hi|         |         |         |		 
-	 |	   |	     |	c	|sa0*sa2hi|         |         |         |		
-	 |	   |	     |	c	|sa0*sa3lo|         |         |         |		 
-	 |	   |	     |	c	|sa0*sa3lo|         |         |         |	
-	 |	   |	     |	c	|sa1*sa1hi|         |         |         |	  	
-	 |	   |	     |	c	|sa1*sa2lo|         |         |         |	  	
-	 |	   |	     |	c	|sa1*sa2lo|         |         |         |		 			   		
-	 |	   |	c    |sa0*sa3hi	|	  |         |         |         |		    		   	
-	 |	   |	c    |sa0*sa3hi	|	  |         |         |         |		    		   		
-	 |	   |	c    |sa1*sa2hi	|	  |         |         |         |		  			   		
-	 |	   |	c    |sa1*sa2hi	|	  |         |         |         |		  			   		
-	 |	   |	c    |sa1*sa3lo	|	  |         |         |         |		  			   		
-	 |	   |	c    |sa1*sa3lo	|	  |         |         |         |		  			   		
-	 |	   |	c    |sa2*sa2lo	|	  |         |         |         | 	     
-	 | 	c  |sa1*sa3hi|		|	  |         |         |         |		    
-	 |	c  |sa1*sa3hi|		|	  |         |         |         |		    
-	 |	c  |sa2*sa2hi|		|	  |         |         |         |		    
-	 | 	c  |sa2*sa3lo|		|	  |         |         |         |		     		   		
-	 |	c  |sa2*sa3lo|		|	  |         |         |         |	    		   		
-  c	 |sa2*sa3hi|         |		|	  |         |         |         |		    		   		
-  c	 |sa2*sa3hi|	     |		|	  |         |         |         |		    		   	 	
-  c	 |sa3*sa3lo|	     |		|	  |         |         |         |		    		   	 	
-sa3*sa3hi|	   |	     |		|	  |         |         |         |		    		   		
---------------------------------------------------------------------------------|
-sr7	 |sr6	   |sr5	     |sr4	|sr3	  |sr2	    |sr1      |sr0      |
+sr7	     |sr6      |sr5      |sr4      |sr3      |sr2      |sr1      |sr0      |
+-------------------------------------------------------------------------------|
+         |         |	     |		   |         |         |sa0*sa0hi|sa0*sa0lo|
+         |         |	     |		   |         |    c    |sa0*sa1lo|         |
+         |         |	     |		   |         |    c    |sa0*sa1lo|         |
+         |         |	     |		   |    c    |sa0*sa1hi|         |         |		
+         |         |	     |		   |    c    |sa0*sa1hi|         |         |		
+         |         |	     |		   |    c    |sa0*sa2lo|         |         |				
+         |         |	     |	       |    c    |sa0*sa2lo|         |         |		
+         |         |	     |		   |    c    |sa1*sa1lo|         |         |		
+         |         |	     |    c    |sa0*sa2hi|         |         |         |		 
+         |         |	     |    c    |sa0*sa2hi|         |         |         |		
+         |         |	     |    c    |sa0*sa3lo|         |         |         |		 
+         |         |	     |    c    |sa0*sa3lo|         |         |         |	
+         |         |	     |    c    |sa1*sa1hi|         |         |         |	  	
+         |         |	     |    c    |sa1*sa2lo|         |         |         |	  	
+         |         |	     |    c    |sa1*sa2lo|         |         |         |		 			   		
+         |         |	c    |sa0*sa3hi|         |         |         |         |		    		   	
+         |         |	c    |sa0*sa3hi|         |         |         |         |		    		   		
+         |         |	c    |sa1*sa2hi|         |         |         |         |		  			   		
+         |         |	c    |sa1*sa2hi|         |         |         |         |		  			   		
+         |         |	c    |sa1*sa3lo|         |         |         |         |		  			   		
+         |         |	c    |sa1*sa3lo|         |         |         |         |		  			   		
+         |         |	c    |sa2*sa2lo|         |         |         |         | 	     
+         |    c    |sa1*sa3hi|         |         |         |         |         |		    
+         |    c    |sa1*sa3hi|         |         |         |         |         |		    
+         |    c    |sa2*sa2hi|         |         |         |         |         |		    
+         |    c    |sa2*sa3lo|         |         |         |         |         |		     		   		
+         |    c    |sa2*sa3lo|         |         |         |         |         |	    		   		
+    c    |sa2*sa3hi|         |         |         |         |         |         |		    		   		
+    c    |sa2*sa3hi|         |         |         |         |         |         |		    		   	 	
+    c    |sa3*sa3lo|         |         |         |         |         |         |		    		   	 	
+sa3*sa3hi|         |         |         |         |         |         |         |		    		   		
+-------------------------------------------------------------------------------|
 */							
 
 .macro SQUARE_U256   
