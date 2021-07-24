@@ -1,18 +1,52 @@
 //Aliases for registers
 
+ Reg |Alias1|Alias2|Alias3|Alias4|
+ x0  | io0  |      |      |      |		
+ x1  | io1  |      |      |      |		
+ x2  | io2  |      |      |      |		
+ x3  | io4  |      |      |      |		
+ x4  | sa0  |      |      |      |		
+ x5  | sa1  |      |      |      |		
+ x6  | sa2  |      |      |      |		
+ x7  | sa3  |      |      |      |		
+ x8  | sb0  |      |      |      |		
+ x9  | sb1  |      |      |      |
+ x10 | sb2  |      |      |      |
+ x11 | sb3  |      |      |      |
+ x12 | sr0  |      |      |      |
+ x13 | sr1  |      |      |      |
+ x14 | sr2  |      |      |      |
+ x15 | sr3  |      |      |      |
+ x16 | sr4  |      |      |      |
+ x17 | sr5  |      |      |      |
+ x18 | sr6  |      |      |      |
+ x19 | sr7  |      |      | csr0 |
+ x20 | pp0  | on0  |      | csr1 |
+ x21 | pp1  | on1  |      | csr2 |
+ x22 | ppc  | on2  |      | csr3 |
+ x23 | sk0  | on3  | tmp0 | csr4 |
+ x24 | sk1  | ond0 | tmp1 | csr5 |
+ x25 | sk2  | ond1 | tmp2 | csr6 |
+ x26 | sk3  |      | tmp3 | csr7 |
+ x27 |      |      | tmp4 | csr8 |
+ x28 |      |      | tmp5 | csr9 |
+ x29 |frmptr|      |      | csr10|
+ x30 |prclrg|      |      | csr11|
+
+
 //Input/Output from/to calling C functions:
 io0 .req x0
 io1 .req x1
 io2 .req x2
 io3 .req x3
 
-//Scalar A
+//Scalar A, used in functions R = A ° B
 sa0 .req x4
 sa1 .req x5
 sa2 .req x6
 sa3 .req x7
 
-//Scalar B
+//Scalar B, used in functions R = A ° B
 sb0 .req x8
 sb1 .req x9
 sb2 .req x10
@@ -23,7 +57,7 @@ sb3 .req x11
 //or
 //R = (A ° B) mod p
 //R = (A ° B) mod n
-//with results in sr0-sr3
+//with results in sr0-sr3 (lower part of R, R lo)
 sr0 .req x12
 sr1 .req x13
 sr2 .req x14
