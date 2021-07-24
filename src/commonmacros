@@ -2,7 +2,7 @@
 
 /**
 Macro INIT_PRIME_P
-initializes the regs for prime p
+initializes the registers for prime p
 */
 .macro INIT_PRIME_P
            //load c of prime into ppc, load the least significant u64 of p, into pp0
@@ -13,14 +13,14 @@ initializes the regs for prime p
 
 /**
 Macro INIT_ORDER_N
-initializes the regs for prime n 
+initializes the registers for prime n 
 */
 .macro INIT_ORDER_N
            //load prime n into regs on0 - on3 
            adr on3, secp256k1_n
            ldp on0, on1, [on3], #16
            ldp on2, on3, [on3]    
-           //load d of prime into ond1 and ond0
+           //load d of prime into ond0 and ond1
            adr ond0, secp256k1_d
            ldp ond1, ond0, [ond0]
 .endm
@@ -53,7 +53,8 @@ initializes the regs sb0...sb3 with the half of order n
 .endm
 
 /**
- Tests if Scalar R (lo) has zero values in all registers (sr0...sr3)
+ Tests if the lower part of Scalar R (lo, sr0...sr3) has zero values in 
+ all registers.
  Returns 0 in io0 R (lo) is zero otherwise 1
 */
 .macro IS_R_LO_ZERO
@@ -106,8 +107,8 @@ initializes the regs sb0...sb3 with the half of order n
 
 /**
 Macro LOAD_A_B
-Loads scalar a from address in reg0 into regs sa0...sa3,
-scalar b from address into sb0...sb3
+Loads scalar a from address in reg0 into sa0...sa3,
+scalar b from address in reg1 into sb0...sb3
 */
 .macro LOAD_A_B reg0=io0 reg1=io1
         //load scalar a 
@@ -172,7 +173,7 @@ Stores sr0...sr3 in memory at address in the given reg
 .endm
 /**
 Macro STORE_R_HI
-Stores sr4...sr7 in memory at address in the given reg
+Stores the higher part of R (R hi, sr4...sr7) in memory at address in reg
 */
 .macro STORE_R_HI reg  
         stp sr4, sr5, [\reg], #16
@@ -181,7 +182,7 @@ Stores sr4...sr7 in memory at address in the given reg
 
 /**
 Macro STORE_A
-Stores a (regs sa0...sa3) in memory at address in the given reg
+Stores a (sa0...sa3) in memory at address in the given reg
 */
 .macro STORE_A reg
         stp sa0, sa1, [\reg], #16
@@ -190,7 +191,7 @@ Stores a (regs sa0...sa3) in memory at address in the given reg
 
 /**
 Macro STORE_B
-Stores b (regs sb0...sb3) in memory at address in the given reg
+Stores b (sb0...sb3) in memory at address in the given reg
 */
 .macro STORE_B reg
         stp sb0, sb1, [\reg], #16
@@ -233,7 +234,7 @@ Stores k (regs sk0...sk3) in memory at address in the given reg
 
 /*
 Macros for the boilerplate of function declaration,
-and saveing/restoring regs on the stack
+and saveing/restoring registers on the stack
 */
 
 .macro PUSH reg1 reg2=xzr
@@ -245,7 +246,7 @@ and saveing/restoring regs on the stack
 .endm
 
 
-//A global C-compatible function that preserves the callee saved regs
+//A global C-compatible function that preserves the callee saved registers
 .macro BEGIN_C_FUNCTION function_name
  	.type \function_name, %function
     .global \function_name
@@ -269,7 +270,8 @@ and saveing/restoring regs on the stack
         .size \function_name, (. - \function_name) 
 .endm
 
-//A global function that does not preserve the callee saved regs
+//A global function that preserves the frame pointer and procedure link register
+//but not the other callee saved regs
 .macro BEGIN_GLOBAL_FUNCTION function_name
  	.type \function_name, %function
     .global \function_name
