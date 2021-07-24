@@ -91,7 +91,7 @@ ond0 .req x25 //0x402da1732fc9bebf
 ond1 .req x24 //0x4551231950b75fc4
 //ond2 = 1, no register needed
 
-//temporary used registers
+//temporary use
 tmp0 .req x23
 tmp1 .req x24
 tmp2 .req x25 
