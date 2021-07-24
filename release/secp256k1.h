@@ -1,5 +1,5 @@
 /**
- * Finite field and ecc arithmetic and on the secp256k1-curve in ARM 64-bit assembly.
+ * Finite field and ecc arithmetic and on the secp256k1-curve in AArch64-assembly.
  * Prime p is 2^256 - c,  with c = 0x1000003d1
  * (SEC 2, section 2.4.1: Recommended Elliptic Curve Domain Parameters,Certicom 
  * Research, 2010, Version 2.0).
@@ -14,13 +14,14 @@
  * This is the same as unsigned long long n[4] = {0xBFD25.....}:
  * A valid input of a function is in the range of 0 to  2^256 - 1:
  * Scalar f = {0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF};
- * All finite field-functions expect addresses of such arrays.
  * is valid.
+ * All finite field-functions expect addresses of such arrays.
  * A Scalar as result of a function modulo p is always < p.
  * A Scalar as result of a function modulo n is always < n.
  * Example: 
  * void secp256k1_add_mod_p(const Scalar a, const Scalar b, Scalar r)
  * calculates the sum of a and b modulo p and returns the result in r.
+ *
  * A Point on the elliptic curve is represented by its x- and y-coordinates as
  * Scalars.
  * Example: 
@@ -32,8 +33,8 @@
  * Invalid inputs cause undefined results or error messages for memory access violations etc.
  */
 
-#ifndef SECP256K1_H
-#define SECP256K1_H 
+#ifndef SECP256K1_ARM_64_H
+#define SECP256K1_ARM_64_H 
 
 typedef unsigned long long Scalar[4];
 
@@ -171,15 +172,16 @@ void secp256k1_invert_mod_p_asign(const Scalar a);
  * Taking square root modulo p
  * r = sqareroot(a) mod p
  * a = r² mod p  
+ * If a has no squareroot, the result is undefined.
  */
 void secp256k1_squareroot_mod_p(const Scalar a, Scalar r);
 
 /**
  * Taking square root modulo p
  * a = sqareroot(a) mod p
+ * If a has no squareroot, the result is undefined.
  */
 void secp256k1_squareroot_mod_p_asign(Scalar a);
-
 
 
 /**
@@ -236,7 +238,7 @@ void secp256k1_point_mul(const Point *a, const Scalar k, Point *r);
 /**
  * Point multiplication
  * multiplies a point with a scalar k 
- * The scalar must be in the interval [1, n-1].
+ * The scalar must be less than the order n.
  * a = k*a
  */
 void secp256k1_point_mul_asign(Point *a, const Scalar k);
@@ -387,8 +389,11 @@ void secp256k1_parse_scalar(const char *str, Scalar s);
  */
 void secp256k1_parse_point(const char *str, Point *pt);
 
-
-
+/**
+ * TODO
+ * Parsing a String str into a Signature is not yet implemented.
+ */
+void secp256k1_parse_signature(const char *str, Signature *sig);
 
 
 #endif
