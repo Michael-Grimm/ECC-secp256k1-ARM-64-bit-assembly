@@ -82,9 +82,9 @@ void CuAssertLongLongEquals_LineMsg(CuTest* tc, const char* file, int line, cons
 #define CuAssertStrEquals_Msg(tc,ms,ex,ac)    CuAssertStrEquals_LineMsg((tc),__FILE__,__LINE__,(ms),(ex),(ac))
 #define CuAssertIntEquals(tc,ex,ac)           CuAssertIntEquals_LineMsg((tc),__FILE__,__LINE__,NULL,(ex),(ac))
 #define CuAssertIntEquals_Msg(tc,ms,ex,ac)    CuAssertIntEquals_LineMsg((tc),__FILE__,__LINE__,(ms),(ex),(ac))
+// M.Grimm Inserted assert function for long long:
 #define CuAssertLongLongEquals(tc,ex,ac)      CuAssertLongLongEquals_LineMsg((tc),__FILE__,__LINE__,NULL,(ex),(ac))
 #define CuAssertLongLongEquals_Msg(tc,ms,ex,ac)    CuAssertLongLongEquals_LineMsg((tc),__FILE__,__LINE__,(ms),(ex),(ac))
-
 
 #define CuAssertDblEquals(tc,ex,ac,dl)        CuAssertDblEquals_LineMsg((tc),__FILE__,__LINE__,NULL,(ex),(ac),(dl))
 #define CuAssertDblEquals_Msg(tc,ms,ex,ac,dl) CuAssertDblEquals_LineMsg((tc),__FILE__,__LINE__,(ms),(ex),(ac),(dl))
