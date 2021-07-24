@@ -18,8 +18,12 @@ sb1 .req x9
 sb2 .req x10
 sb3 .req x11
 
-//Scalar R, the result of big integer functions A ° B
-//The results reductions modulo p or n are in sr0-sr3
+//Scalar R, the result of functions A ° B
+//big integer functions R = A ° B with results in sr0...sr7
+//or
+//R = (A ° B) mod p
+//R = (A ° B) mod n
+//with results in sr0-sr3
 sr0 .req x12
 sr1 .req x13
 sr2 .req x14
@@ -33,8 +37,7 @@ sr7 .req x19
 //Prime p = 2²⁵⁶ - c with c = 0x1000003d1
 pp0 .req x20 //0xfffffffefffffc2f
 pp1 .req x21 //0xffffffffffffffff
-
-//c of p, c = 0x1000003d1
+//c of prime p = ppc = 0x1000003d1
 ppc .req x22 
 
 //Scalar K, used in point multiplication
@@ -49,8 +52,7 @@ on0 .req x20 //0xbfd25e8cd0364141
 on1 .req x21 //0xbaaedce6af48a03b
 on2 .req x22 //0xfffffffffffffffe
 on3 .req x23 //0xffffffffffffffff
-
-//d of order n, ond = 0x1 4551231950b75fc4 402da1732fc9bebf
+//d of order n = ond = 0x1 4551231950b75fc4 402da1732fc9bebf
 ond0 .req x25 //0x402da1732fc9bebf
 ond1 .req x24 //0x4551231950b75fc4
 //ond2 = 1, no register needed
@@ -62,8 +64,6 @@ tmp2 .req x25
 tmp3 .req x26
 tmp4 .req x27
 tmp5 .req x28
-
-
 
 
 //Callee-Saved-Registers
