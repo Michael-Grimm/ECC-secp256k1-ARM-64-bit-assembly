@@ -1,5 +1,4 @@
-//Aliases for registers
-
+/**Aliases for registers
  Reg |Alias1|Alias2|Alias3|Alias4|
  x0  | io0  |      |      |      |		
  x1  | io1  |      |      |      |		
@@ -32,7 +31,7 @@
  x28 |      |      | tmp5 | csr9 |
  x29 |frmptr|      |      | csr10|
  x30 |prclrg|      |      | csr11|
-
+*/
 
 //Input/Output from/to calling C functions:
 io0 .req x0
