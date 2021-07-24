@@ -5,6 +5,6 @@ For better readability of the source code
 * aliases are used for all registers -> see file 'aliases'.
 * macros encapsulate frequently recurring commands and boilerplate for function declaration -> see files 'commonmacros' and 'u256macros'
 
-A C-interface for calling the assembly functions is in secp256k1.h 
+C-interface for all public assembly functions: secp256k1.h 
 
 The project was developed on a Raspberry Pi 4, 8GB, with ubuntuMATE 20.4
