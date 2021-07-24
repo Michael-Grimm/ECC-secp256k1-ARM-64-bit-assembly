@@ -147,14 +147,14 @@ Addition of the partial products
 c: possible carry
 sr7      |sr6      |sr5      |sr4      |sr3      |sr2      |sr1      |sr0      |
 -------------------------------------------------------------------------------|
-         |         |	     |		   |         |         |sa0*sa0hi|sa0*sa0lo|
-         |         |	     |		   |         |    c    |sa0*sa1lo|         |
-         |         |	     |		   |         |    c    |sa0*sa1lo|         |
-         |         |	     |		   |    c    |sa0*sa1hi|         |         |		
-         |         |	     |		   |    c    |sa0*sa1hi|         |         |		
-         |         |	     |		   |    c    |sa0*sa2lo|         |         |			
+         |         |	     |         |         |         |sa0*sa0hi|sa0*sa0lo|
+         |         |	     |         |         |    c    |sa0*sa1lo|         |
+         |         |	     |         |         |    c    |sa0*sa1lo|         |
+         |         |	     |         |    c    |sa0*sa1hi|         |         |		
+         |         |	     |         |    c    |sa0*sa1hi|         |         |		
+         |         |	     |         |    c    |sa0*sa2lo|         |         |			
          |         |	     |         |    c    |sa0*sa2lo|         |         |		
-         |         |	     |		   |    c    |sa1*sa1lo|         |         |		
+         |         |	     |         |    c    |sa1*sa1lo|         |         |		
          |         |	     |    c    |sa0*sa2hi|         |         |         |		 
          |         |	     |    c    |sa0*sa2hi|         |         |         |		
          |         |	     |    c    |sa0*sa3lo|         |         |         |		 
