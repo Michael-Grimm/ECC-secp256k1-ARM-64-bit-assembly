@@ -6,3 +6,5 @@ For better readability of the source code
 * macros encapsulate frequently recurring commands and boilerplate for function declaration -> see files 'commonmacros' and 'u256macros'
 
 C-functions for finite field arithmetic and ecc are in secp256k1.h, u256.h contains two big integer functions (multiplication and squaring) with 512-bit results.
+
+The project was developed on a Raspberry Pi 4, 8GB, with ubuntuMATE 20.4
