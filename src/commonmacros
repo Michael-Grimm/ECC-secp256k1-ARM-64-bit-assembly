@@ -5,9 +5,9 @@ Macro INIT_PRIME_P
 initializes the regs for prime p
 */
 .macro INIT_PRIME_P
-           //load c of prime into cop, load the least significant u64 of p, into pp0
+           //load c of prime into ppc, load the least significant u64 of p, into pp0
            adr pp1, prime_p_and_c
-           ldp pp0, cop, [pp1] 
+           ldp pp0, ppc, [pp1] 
            mvn pp1, xzr //0xffffffffffffffff is now in pp1
 .endm
 
@@ -20,9 +20,9 @@ initializes the regs for prime n
            adr on3, secp256k1_n
            ldp on0, on1, [on3], #16
            ldp on2, on3, [on3]    
-           //load d of prime into don1 and don2
-           adr don2, secp256k1_d
-           ldp don1, don2, [don2]
+           //load d of prime into ond1 and ond0
+           adr ond0, secp256k1_d
+           ldp ond1, ond0, [ond0]
 .endm
  
  

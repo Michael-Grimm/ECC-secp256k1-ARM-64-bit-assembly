@@ -6,9 +6,9 @@ Use of registers in functions modulo order n
 sr0...sr7 u512-integer r0...r7 as result of multiplication of a*b
 sr0...sr3 u256-integer r0...r3 as result of multiplication a*b mod n
 on0...on3 n: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141
-don1...don2 d = 2^256 - n = 0x1_4551231950b75fc4_402da1732fc9bebf
-don1       0x0x402da1732fc9bebf 
-don2       0x4551231950b75fc4   
+ond1...ond0 d = 2^256 - n = 0x1_4551231950b75fc4_402da1732fc9bebf
+ond1       0x0x402da1732fc9bebf 
+ond0       0x4551231950b75fc4   
 tmp3...tmp5 free use
 x29		  frame pointer
 x30       procedure link register
@@ -141,8 +141,8 @@ END_GLOBAL_FUNCTION reduce_r_mod_n
 
 .macro REDUCE_512_MOD_N
         reduce_r7\@:
-        mul     tmp3, don1, sr7 //don1*r7 lo
-        umulh   tmp4, don1, sr7 //don1*r7 hi
+        mul     tmp3, ond1, sr7 //ond1*r7 lo
+        umulh   tmp4, ond1, sr7 //ond1*r7 hi
         mov     tmp5, sr7      //r7 in tmp5
         adds    sr3, sr3, tmp3 
         adcs    sr4, sr4, tmp4
@@ -150,8 +150,8 @@ END_GLOBAL_FUNCTION reduce_r_mod_n
         adcs    sr6, sr6, xzr
         adc     sr7, xzr, xzr //new carry in sr7?
         
-        mul     tmp3, don2, tmp5 //don2*r7 lo
-        umulh   tmp4, don2, tmp5 //don2*r7 hi
+        mul     tmp3, ond0, tmp5 //ond0*r7 lo
+        umulh   tmp4, ond0, tmp5 //ond0*r7 hi
         adds    sr4, sr4, tmp3 
         adcs    sr5, sr5, tmp4
         adcs    sr6, sr6, xzr
@@ -163,8 +163,8 @@ END_GLOBAL_FUNCTION reduce_r_mod_n
         cbnz sr7, reduce_r7\@
    
         reduce_r6\@:
-        mul     tmp3, don1, sr6 //don1*r6 lo
-        umulh   tmp4, don1, sr6 //don1*r6 hi
+        mul     tmp3, ond1, sr6 //ond1*r6 lo
+        umulh   tmp4, ond1, sr6 //ond1*r6 hi
         mov     tmp5, sr6      //r6 in tmp5
         adds    sr2, sr2, tmp3 
         adcs    sr3, sr3, tmp4
@@ -172,8 +172,8 @@ END_GLOBAL_FUNCTION reduce_r_mod_n
         adcs    sr5, sr5, xzr
         adc     sr6, xzr, xzr 
         
-        mul     tmp3, don2, tmp5 //don2*r6 lo
-        umulh   tmp4, don2, tmp5 //don2*r6 hi
+        mul     tmp3, ond0, tmp5 //ond0*r6 lo
+        umulh   tmp4, ond0, tmp5 //ond0*r6 hi
         adds    sr3, sr3, tmp3 
         adcs    sr4, sr4, tmp4
         adcs    sr5, sr5, xzr
@@ -185,8 +185,8 @@ END_GLOBAL_FUNCTION reduce_r_mod_n
         cbnz sr6, reduce_r6\@   //new carries in sr6?
 
         reduce_r5\@:
-        mul     tmp3, don1, sr5 //don1*r5 lo
-        umulh   tmp4, don1, sr5 //don1*r5 hi
+        mul     tmp3, ond1, sr5 //ond1*r5 lo
+        umulh   tmp4, ond1, sr5 //ond1*r5 hi
         mov     tmp5, sr5      //r5 in tmp5
         adds    sr1,  sr1,  tmp3 
         adcs    sr2, sr2, tmp4
@@ -194,8 +194,8 @@ END_GLOBAL_FUNCTION reduce_r_mod_n
         adcs    sr4, sr4, xzr
         adc     sr5, xzr, xzr 
         
-        mul     tmp3, don2, tmp5 //don2*r5 lo
-        umulh   tmp4, don2, tmp5 //don2*r5 hi
+        mul     tmp3, ond0, tmp5 //ond0*r5 lo
+        umulh   tmp4, ond0, tmp5 //ond0*r5 hi
         adds    sr2, sr2, tmp3 
         adcs    sr3, sr3, tmp4
         adcs    sr4, sr4, xzr
@@ -207,8 +207,8 @@ END_GLOBAL_FUNCTION reduce_r_mod_n
         cbnz sr5, reduce_r5\@   //new carries in sr5?
 
         reduce_r4\@:
-        mul     tmp3, don1, sr4 //don1*r4 lo
-        umulh   tmp4, don1, sr4 //don1*r4 hi
+        mul     tmp3, ond1, sr4 //ond1*r4 lo
+        umulh   tmp4, ond1, sr4 //ond1*r4 hi
         mov     tmp5, sr4      //r4 in tmp5
         adds    sr0, sr0, tmp3 
         adcs    sr1, sr1, tmp4
@@ -216,8 +216,8 @@ END_GLOBAL_FUNCTION reduce_r_mod_n
         adcs    sr3, sr3, xzr
         adc     sr4, xzr, xzr 
         
-        mul     tmp3, don2, tmp5 //don2*r4 lo
-        umulh   tmp4, don2, tmp5 //don2*r4 hi
+        mul     tmp3, ond0, tmp5 //ond0*r4 lo
+        umulh   tmp4, ond0, tmp5 //ond0*r4 hi
         adds    sr1, sr1, tmp3 
         adcs    sr2, sr2, tmp4
         adcs    sr3, sr3, xzr
@@ -398,8 +398,8 @@ multiplies two 256-bit integers modulo n.
 n is the order of secp256k1: n = 2^256 - d
 with d of n = 0x14551231950b75fc4402da1732fc9bebf
 don0: 0x1 (no register needed)
-don1: 0x402da1732fc9bebf
-don2: 0x4551231950b75fc4
+ond1: 0x402da1732fc9bebf
+ond0: 0x4551231950b75fc4
 
 Input:
 Result r = a*b (mod n)

@@ -50,15 +50,15 @@ END_GLOBAL_FUNCTION r_is_zero
 /**
 The macro REDUCE_512_MOD_P 
 reduces a 512-bit-value r to a 256-bit-value mod p.
-p = 2**256 - c, with c = cop = 0x1000003d1
+p = 2**256 - c, with c = ppc = 0x1000003d1
 ==> 2**256 = p+c = 0+c =c
 */
 .macro REDUCE_512_MOD_P
       
-        //sr7*cop to sr4 sr3
+        //sr7*ppc to sr4 sr3
         reduce_r7\@: 
-        mul     tmp4, cop, sr7 //c*r7 lo
-        umulh   tmp5, cop, sr7 //c*r7 hi
+        mul     tmp4, ppc, sr7 //c*r7 lo
+        umulh   tmp5, ppc, sr7 //c*r7 hi
         adds    sr3, sr3, tmp4 
         adcs    sr4, sr4, tmp5
         adcs    sr5, sr5, xzr
@@ -66,10 +66,10 @@ p = 2**256 - c, with c = cop = 0x1000003d1
         adc     sr7, xzr, xzr //new carry in sr7?
         cbnz sr7, reduce_r7\@ 
          
-        //sr6*cop to sr3 sr2     
+        //sr6*ppc to sr3 sr2     
         reduce_r6\@: 
-        mul     tmp4, cop, sr6 //c*r6 lo
-        umulh   tmp5, cop, sr6 //c*r6 hi
+        mul     tmp4, ppc, sr6 //c*r6 lo
+        umulh   tmp5, ppc, sr6 //c*r6 hi
         adds    sr2, sr2, tmp4 
         adcs    sr3, sr3, tmp5
         adcs    sr4, sr4, xzr
@@ -77,10 +77,10 @@ p = 2**256 - c, with c = cop = 0x1000003d1
         adc     sr6, xzr, xzr //new carry in sr6?
         cbnz sr6, reduce_r6\@  
         
-        //sr5*cop to sr2 sr1     
+        //sr5*ppc to sr2 sr1     
         reduce_r5\@: //r5=sr5
-        mul     tmp4, cop, sr5 //c*r5 lo
-        umulh   tmp5, cop, sr5 //c*r5 hi
+        mul     tmp4, ppc, sr5 //c*r5 lo
+        umulh   tmp5, ppc, sr5 //c*r5 hi
         adds    sr1, sr1, tmp4 
         adcs    sr2, sr2, tmp5
         adcs    sr3, sr3, xzr
@@ -88,10 +88,10 @@ p = 2**256 - c, with c = cop = 0x1000003d1
         adc     sr5, xzr, xzr //new carry in sr5?
         cbnz sr5, reduce_r5\@  
 
-        //sr4*cop to sr1 sr0     
+        //sr4*ppc to sr1 sr0     
         reduce_r4\@: //r4=sr4
-        mul     tmp4, cop, sr4 //c*r4 lo
-        umulh   tmp5, cop, sr4 //c*r4 hi
+        mul     tmp4, ppc, sr4 //c*r4 lo
+        umulh   tmp5, ppc, sr4 //c*r4 hi
         adds    sr0, sr0, tmp4 
         adcs    sr1, sr1, tmp5
         adcs    sr2, sr2, xzr
@@ -333,7 +333,7 @@ The prime is expected in pp0 and pp2
         adc    sr4, sr4, xzr          
         cbz sr4, _possibly_reduce_\@
 		    _carry_occured_\@: 
-		    mul   sr5, sr4, cop //carries*c
+		    mul   sr5, sr4, ppc //carries*c
 		    adds   sr0, sr0, sr5
 		    adcs   sr1, sr1, xzr
 		    adcs   sr2, sr2, xzr
