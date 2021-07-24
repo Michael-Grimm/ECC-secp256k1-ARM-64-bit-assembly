@@ -5,6 +5,6 @@ For better readability of the source code
 * aliases are used for all registers -> see file 'aliases'.
 * macros encapsulate frequently recurring commands and boilerplate for function declaration -> see files 'commonmacros' and 'u256macros'
 
-All C functions for using finite field arithmetic and ecc are in secp256k1.h 
+A C-interface for calling the assembly functions is in secp256k1.h 
 
 The project was developed on a Raspberry Pi 4, 8GB, with ubuntuMATE 20.4
