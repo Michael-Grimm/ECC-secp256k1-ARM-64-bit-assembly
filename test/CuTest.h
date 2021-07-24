@@ -1,3 +1,9 @@
+/*This is not the original version of Asim Jalis.
+I added an assertion function for comparing long longs.
+See lines 91-94. 
+M. Grimm
+*/
+
 #ifndef CU_TEST_H
 #define CU_TEST_H
 
@@ -85,7 +91,7 @@ void CuAssertLongLongEquals_LineMsg(CuTest* tc, const char* file, int line, cons
 // M.Grimm Inserted assert function for long long:
 #define CuAssertLongLongEquals(tc,ex,ac)      CuAssertLongLongEquals_LineMsg((tc),__FILE__,__LINE__,NULL,(ex),(ac))
 #define CuAssertLongLongEquals_Msg(tc,ms,ex,ac)    CuAssertLongLongEquals_LineMsg((tc),__FILE__,__LINE__,(ms),(ex),(ac))
-
+//End of the insertion
 #define CuAssertDblEquals(tc,ex,ac,dl)        CuAssertDblEquals_LineMsg((tc),__FILE__,__LINE__,NULL,(ex),(ac),(dl))
 #define CuAssertDblEquals_Msg(tc,ms,ex,ac,dl) CuAssertDblEquals_LineMsg((tc),__FILE__,__LINE__,(ms),(ex),(ac),(dl))
 #define CuAssertPtrEquals(tc,ex,ac)           CuAssertPtrEquals_LineMsg((tc),__FILE__,__LINE__,NULL,(ex),(ac))
