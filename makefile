@@ -1,5 +1,17 @@
-test: build
-	make -C ./test utests
+clear_and_test: 
+	rm ./release/libsecp256k1.a
+	rm ./release/secp256k1.h
+	rm ./*.o
+	make build
+	make -C ./test test_after_updating_test_suites
+
+test_after_tests_changed: 
+	make build
+	make -C ./test test_after_updating_test_suites
+	
+test_after_code_changed: 
+	make build
+	make -C ./test test_without_updating_test_suites
 
 build: ./release/libsecp256k1.a
 
@@ -24,14 +36,8 @@ build: ./release/libsecp256k1.a
 ./u256.o: ./src/u256.sx
 	gcc   -I./src -c -o ./u256.o ./src/u256.sx   
 	
-	 
-	
-clear: 	
-	rm ./release/libsecp256k1.a
-	rm ./release/secp256k1.h
-	rm ./*.o
-	make build
-	make test
+
+
 
 
 
