@@ -1,9 +1,14 @@
 clear_and_test: 
-	rm ./release/libsecp256k1.a
-	rm ./release/secp256k1.h
-	rm ./*.o
+	make clear
 	make build
 	make -C ./test test_after_updating_test_suites
+
+clear:
+	rm -rf ./release/libsecp256k1.a
+	rm -rf ./release/libsecp256k1.a
+	rm -rf ./release/secp256k1.h
+	rm -rf ./*.o
+	
 
 test_after_tests_changed: 
 	make build
