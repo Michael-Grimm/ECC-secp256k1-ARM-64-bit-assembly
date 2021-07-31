@@ -95,7 +95,7 @@ END_C_FUNCTION secp256k1_parse_u64
            ldp sr1, sr0, [\arr], #16
            ldp sr3, sr2, [\arr], #16
            ldp sr5, sr4, [\arr], #16
-           ldp sr7, sr6, [\arr], #16 //increment is useful, if function is called again
+           ldp sr7, sr6, [\arr], #16 //increment is necessary, if function is called again
            mov tmp5, \arr
            CONVERT_CHARS_TO_LONG_LONG sr1 sr0 io0
            CONVERT_CHARS_TO_LONG_LONG sr3 sr2 io1
@@ -174,4 +174,155 @@ BEGIN_C_FUNCTION secp256k1_parse_point
         PARSE_SCALAR io0 io1 //point.y
         end_parse_point:
 END_C_FUNCTION secp256k1_parse_point
+
+
+
+
+.macro INIT_MSKF1
+    mov mskf1, 0xf  //000000000000000f
+.endm
+
+.macro INIT_MSKF32
+	mvn mskf32, xzr, lsr #32 //00000000ffffffff
+.endm
+
+.macro CONVERT_NIBBLE_TO_ASCII input accum 
+    and tmp2, \input, mskf1    //mskf1 must bi initialized with 0xF
+    cmp tmp2, 9
+    bhi is_above_9\@
+    add tmp2, tmp2, 48 //'0'...'9'
+    b is_converted\@
+    is_above_9\@: 
+    add tmp2, tmp2, 87 //'a'...'f'
+    is_converted\@:
+    lsl \accum, \accum, #8
+    orr \accum, \accum, tmp2
+    lsr \input, \input, #4
+.endm
+
+
+.macro CONVERT_U32_TO_ASCII val accum
+	CONVERT_NIBBLE_TO_ASCII \val \accum 
+	CONVERT_NIBBLE_TO_ASCII \val \accum 
+	CONVERT_NIBBLE_TO_ASCII \val \accum 
+	CONVERT_NIBBLE_TO_ASCII \val \accum 
+	CONVERT_NIBBLE_TO_ASCII \val \accum 
+	CONVERT_NIBBLE_TO_ASCII \val \accum 
+	CONVERT_NIBBLE_TO_ASCII \val \accum 
+	CONVERT_NIBBLE_TO_ASCII \val \accum 
+.endm
+
+/**
+ * The function secp256k1_u32_to string
+ * converts a 32-bit-integer to ascii char array of 8 bytes.
+ * Input: 
+ * int val in x0
+ * Output:
+ * String at address in x1
+ */
+BEGIN_C_FUNCTION secp256k1_u32_to_string
+    INIT_MSKF1
+    mov x3, xzr
+	CONVERT_U32_TO_ASCII x0 x3 
+    str x3, [x1]
+END_C_FUNCTION secp256k1_u32_to_string
+
+
+.macro CONVERT_U64_TO_ASCII val lo hi
+	CONVERT_U32_TO_ASCII \val \lo 
+	CONVERT_U32_TO_ASCII \val \hi   
+.endm
+
+/**
+ * The function secp256k1_u64_to string
+ * converts a 64-bit-integer to ascii char array of 16 bytes.
+ * Input: 
+ * long long val in io0
+ * Output:
+ * Address of buffer for the resulting ASCII characters in io1
+ */
+BEGIN_C_FUNCTION secp256k1_u64_to_string
+    INIT_MSKF1
+    mov x3, xzr
+    mov x4, xzr
+	CONVERT_U64_TO_ASCII x0 x3 x4
+    stp x4, x3, [x1]  
+END_C_FUNCTION secp256k1_u64_to_string
+
+/**
+ * The macro CONVERT_SCALAR_TO_ASCII
+ * converts a Scalar to an ASCII string with 64 chars.
+ * Input:
+ * Address of Scalar in io0
+ * Output:
+ * Address of buffer for the resulting ASCII characters in io1
+ */
+.macro CONVERT_SCALAR_TO_ASCII
+    CLEAR_R
+    INIT_MSKF1
+    CONVERT_U64_TO_ASCII sa0 sr7 sr6
+    CONVERT_U64_TO_ASCII sa1 sr5 sr4
+    CONVERT_U64_TO_ASCII sa2 sr3 sr2
+    CONVERT_U64_TO_ASCII sa3 sr1 sr0
+    
+.endm
+
+/**
+ * The function secp256k1_scalar_to_string
+ * converts a Scalar to a ASCII string with 64 chars.
+ * Input:
+ * Address of Scalar in io0
+ * Output:
+ * Address of buffer for the resulting ASCII characters in io1
+ */
+BEGIN_C_FUNCTION secp256k1_scalar_to_string
+	LOAD_A io0
+    CONVERT_SCALAR_TO_ASCII
+    STORE_R io1  
+END_C_FUNCTION secp256k1_scalar_to_string
+
+/**
+ * TODO
+ * The function secp256k1_scalar_to_der
+ * converts a Scalar into a DER encoded string.
+ * The function returns the length of the DER string in bytes.
+ * The buffer der must have at least 36 bytes.
+ * Input:
+ * Address of Scalar in io0
+ * Output:
+ * Address of buffer for the resulting ASCII characters in io1
+ */
+BEGIN_C_FUNCTION secp256k1_scalar_to_der
+	LOAD_A io0
+ 	mov io0, #68 //The standard length of a Scalar plus 4 bytes for the header
+    lsr tmp3, sa3, #63 //if the most significant bit is 1 (a "negative" integer), a "00" must be appended to the header and the size of the integer is 33
+    add io0, io0, tmp3      //the result of the function is now 34 or 35
+    mov tmp5, #0x3032 //ascii '02'
+    mov tmp4, #0x3230 //ascii '20'
+    add tmp5, tmp5, tmp3  //now  size is '20' or '21'
+    lsl tmp5, tmp5, #16
+    orr tmp5, tmp5, tmp4 
+    //tmp5 contains the header of the DER encoded string '0220' or '0221'
+
+    cbz tmp3, no00appending
+    //is negative, appending '00' is necessary
+  //  mov tmp4, #0x3030 //ascii '00'
+    //strh tmph4, [io1], #2
+    no00appending:
+   strh tmph5, [io1], #2
+    lsr tmp5, tmp5, #16
+    strh tmph5, [io1], #2
+ 
+    CONVERT_SCALAR_TO_ASCII
+    STORE_R io1 
+END_C_FUNCTION secp256k1_scalar_to_der
+
+
+
+
+
+
+
+
+
 

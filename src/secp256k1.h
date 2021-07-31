@@ -355,14 +355,23 @@ int secp256k1_verify(const Point *puk, const Scalar msg, const Signature *sig);
 
 
 
-//********** Functions for parsing strings into Scalars or Points **************
-/* 
- A valid string must contain ASCII-characters '0'...'9', 'A'...'F' or 'a'...'f'
- Upper and lower case can be mixed: AaBb ist valid.
- The string must not start with the prefix "0x".
- There is no error checking for valid string length or valid hex-characters
- The result of parsing an invalid string (e.g. 0xIO) is undefined or can cause 
- memory access violation errors if it is too short.
+/**
+ * Functions for parsing char-arrays (strings) into Scalars, Points or Signatures 
+ * and vice versa
+ *
+ * A valid string must contain ASCII-chars '0'...'9', 'A'...'F' or 'a'...'f'
+ * Upper and lower case can be mixed: AaBb ist valid.
+ * The string must not start with the prefix "0x".
+ * There is no error checking for valid string length or valid hex-characters
+ * The result of parsing an invalid string (e.g. 0xIO) is undefined or can cause 
+ * memory access violation errors if it is too short.
+ *
+ * If a Scalar, Point or Signature is converted to a string the caller of 
+ * the function has to provide a buffer with the the necessary size.
+ * e.g. char buffer_for_scalar[64];
+ * The called function does not provide a terminating zero, so it is up to the
+ * caller to make the buffer one byte larger and set the contents to zero.
+ * e.g. char buffer_for_scalar[65] = {0};
 */
 
 /**
@@ -372,10 +381,26 @@ int secp256k1_verify(const Point *puk, const Scalar msg, const Signature *sig);
 unsigned long long secp256k1_parse_u64(const char *str);
 
 /**
+ * The function secp256k1_u64_to string
+ * converts a 64-bit-integer to an ascii char array of 16 bytes.
+ */
+void secp256k1_u64_to_string(long long val, char *str);
+
+/**
  * The function secp256k1_parse_scalar
  * parses a String with length of 64 chars into a Scalar.
  */
 void secp256k1_parse_scalar(const char *str, Scalar s);
+
+
+/**
+ * The function secp256k1_scalar_to_string
+ * converts a Scalar to a string with 64 chars.
+ */
+void secp256k1_scalar_to_string(const Scalar s, char *str);
+
+
+
 
 /**
  * The function secp256k1_parse_point
@@ -389,11 +414,31 @@ void secp256k1_parse_scalar(const char *str, Scalar s);
  */
 void secp256k1_parse_point(const char *str, Point *pt);
 
+
+
+//******************Functions for parsing strings into Signatures and vice versa
+
 /**
  * TODO
  * Parsing a String str into a Signature is not yet implemented.
  */
 void secp256k1_parse_signature(const char *str, Signature *sig);
+
+
+
+
+
+
+//******************helper functions - used for testing*************************
+
+/**
+ * The function secp256k1_u32_to string
+ * converts a 32-bit-integer to an ascii char array of 16 bytes (without trailing 0).
+ */
+void secp256k1_u32_to_string(int val, char *str);
+
+
+
 
 
 #endif

@@ -134,6 +134,31 @@ scalar b from address in reg1 into sb0...sb3
 .endm
 
 
+.macro CLEAR_A
+        mov sa0, xzr
+        mov sa1, xzr
+        mov sa2, xzr
+        mov sa3, xzr
+.endm
+
+.macro CLEAR_B
+        mov sb0, xzr
+        mov sb1, xzr
+        mov sb2, xzr
+        mov sb3, xzr
+.endm
+
+.macro CLEAR_R
+        mov sr0, xzr
+        mov sr1, xzr
+        mov sr2, xzr
+        mov sr3, xzr
+        mov sr4, xzr
+        mov sr5, xzr
+        mov sr6, xzr
+        mov sr7, xzr
+.endm
+
 .macro SET_A_TO_1
         mov sa0, #1
         mov sa1, xzr
@@ -181,6 +206,18 @@ Stores the higher part of R (R hi, sr4...sr7) in memory at address in reg
 .endm
 
 /**
+Macro STORE_R
+stores sr0...sr7 into memory at address in reg
+*/
+.macro STORE_R reg
+        stp sr0, sr1, [\reg], #16
+        stp sr2, sr3, [\reg], #16
+        stp sr4, sr5, [\reg], #16
+        stp sr6, sr7, [\reg]
+.endm
+
+
+/**
 Macro STORE_A
 Stores a (sa0...sa3) in memory at address in the given reg
 */
@@ -194,6 +231,17 @@ Macro STORE_B
 Stores b (sb0...sb3) in memory at address in the given reg
 */
 .macro STORE_B reg
+        stp sb0, sb1, [\reg], #16
+        stp sb2, sb3, [\reg]
+.endm
+
+/**
+Macro STORE_A_B
+stores a and b in memory at address in reg
+*/
+.macro STORE_A_B
+        stp sa0, sa1, [\reg], #16
+        stp sa2, sa3, [\reg], #16
         stp sb0, sb1, [\reg], #16
         stp sb2, sb3, [\reg]
 .endm

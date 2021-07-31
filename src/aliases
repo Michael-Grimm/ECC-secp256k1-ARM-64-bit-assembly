@@ -1,38 +1,40 @@
 /**Aliases for registers
 
- Reg |Alias1|Alias2|Alias3|Alias4|
- x0  | io0  |      |      |      |		
- x1  | io1  |      |      |      |		
- x2  | io2  |      |      |      |		
- x3  | io4  |      |      |      |		
- x4  | sa0  |      |      |      |		
- x5  | sa1  |      |      |      |		
- x6  | sa2  |      |      |      |		
- x7  | sa3  |      |      |      |		
- x8  | sb0  |      |      |      |		
- x9  | sb1  |      |      |      |
- x10 | sb2  |      |      |      |
- x11 | sb3  |      |      |      |
- x12 | sr0  |      |      |      |
- x13 | sr1  |      |      |      |
- x14 | sr2  |      |      |      |
- x15 | sr3  |      |      |      |
- x16 | sr4  |      |      |      |
- x17 | sr5  |      |      |      |
- x18 | sr6  |      |      |      |
- x19 | sr7  |      |      | csr0 |
- x20 | pp0  | on0  |      | csr1 |
- x21 | pp1  | on1  |      | csr2 |
- x22 | ppc  | on2  |      | csr3 |
- x23 | sk0  | on3  | tmp0 | csr4 |
- x24 | sk1  | ond0 | tmp1 | csr5 |
- x25 | sk2  | ond1 | tmp2 | csr6 |
- x26 | sk3  |      | tmp3 | csr7 |
- x27 |      |      | tmp4 | csr8 |
- x28 |      |      | tmp5 | csr9 |
- x29 |frmptr|      |      | csr10|
- x30 |prclrg|      |      | csr11|
-
+ Reg |Alias1|Alias2|Alias3|Alias4|Alias5|
+ x0  | io0  |      |      |      |		|
+ x1  | io1  |      |      |      |		|
+ x2  | io2  |      |      |      |		|
+ x3  | io4  |      |      |      |		|
+ x4  | sa0  |      |      |      |		|
+ x5  | sa1  |      |      |      |		|
+ x6  | sa2  |      |      |      |		|
+ x7  | sa3  |      |      |      |		|
+ x8  | sb0  |      |      |      |		|
+ x9  | sb1  |      |      |      |      |
+ x10 | sb2  |      |      |      |      |
+ x11 | sb3  |      |      |      |      |
+ x12 | sr0  |      |      |      |      |
+ x13 | sr1  |      |      |      |      |
+ x14 | sr2  |      |      |      |      |
+ x15 | sr3  |      |      |      |      |
+ x16 | sr4  |      |      |      |      |
+ x17 | sr5  |      |      |      |      |
+ x18 | sr6  |      |      |      |      |
+ x19 | sr7  |      |      | csr0 |      |
+ x20 | pp0  | on0  |      | csr1 |mskf1 |
+ x21 | pp1  | on1  |      | csr2 |mskf32|
+ x22 | ppc  | on2  |      | csr3 |      |
+ x23 | sk0  | on3  | tmp0 | csr4 |      |
+ x24 | sk1  | ond0 | tmp1 | csr5 |      |
+ x25 | sk2  | ond1 | tmp2 | csr6 |      |
+ x26 | sk3  |      | tmp3 | csr7 |      |
+ x27 |      |      | tmp4 | csr8 |      |
+ x28 |      |      | tmp5 | csr9 |      |
+ x29 |frmptr|      |      | csr10|      |
+ x30 |prclrg|      |      | csr11|      |
+Words:
+ w27 |      |      |tmph4 |      |      |
+ w28 |      |      |tmph5 |      |      |
 */
 
 //Input/Output from/to calling C functions:
@@ -99,7 +101,8 @@ tmp2 .req x25
 tmp3 .req x26
 tmp4 .req x27
 tmp5 .req x28
-
+tmph4 .req w27
+tmph5 .req w28
 
 //Callee-Saved-Registers
 csr0 .req x19
@@ -116,3 +119,7 @@ csr9 .req x28
 //Frame pointer and procedure link register
 frmptr .req x29
 prclrg .req x30
+
+//Registers used for masks
+mskf1 .req x20 // mask for a nibble: 000000000000000f
+mskf32 .req x21// mask for a word:   00000000ffffffff
