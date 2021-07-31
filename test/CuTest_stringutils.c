@@ -226,3 +226,100 @@ void Testsecp256k1_parse_u64_3(CuTest *tc){
 		CuAssertLongLongEquals_Msg(tc, "exp != val", (exp), (val));
 }
 
+
+//***************************Tests for converting a Scalar into an ASCII string*****************************+
+
+void Test_secp256k1_scalar_to_string_1(CuTest *tc){
+        Scalar s = {0x5218cb08e79cce78, 0x2bf92433d9919b9c,0xfb7152f85cee7eb5,0x0231c6f3d980a6b0};
+        char exp_str[] = "0231c6f3d980a6b0fb7152f85cee7eb52bf92433d9919b9c5218cb08e79cce78\0";
+        char str[65] = {0};
+        secp256k1_scalar_to_string(s, str);
+        CuAssertStrEquals_Msg(tc, "str != exp_str", exp_str, str);
+}
+
+
+void Test_secp256k1_scalar_to_string_2(CuTest *tc){
+        Scalar s = {0xabba1970dead1982, 0xbabecafe13001224,0xfefe0830deadbeef,0xbaba1920dead2001};
+        char exp_str[] = "baba1920dead2001fefe0830deadbeefbabecafe13001224abba1970dead1982\0";
+        char str[65] = {0};
+        secp256k1_scalar_to_string(s, str);
+        CuAssertStrEquals_Msg(tc, "str != exp_str", exp_str, str);
+}
+
+
+//***************************Tests for helper functions************************************
+void Test_secp256k1_u32_to_string_1(CuTest *tc){
+
+        int val = 0x87654321;
+        char str[] = "00000000";
+        char exp_str[] = "87654321";
+        secp256k1_u32_to_string(val, str);
+        CuAssertStrEquals_Msg(tc, "str != exp_str", exp_str, str);
+}
+
+void Test_secp256k1_u32_to_string_1a(CuTest *tc){
+
+        int val = 0x87654321;
+        char str[9];
+        str[8] = 0;
+        char exp_str[] = "87654321";
+        secp256k1_u32_to_string(val, str);
+        CuAssertStrEquals_Msg(tc, "str != exp_str", exp_str, str);
+}
+
+void Test_secp256k1_u32_to_string_2(CuTest *tc){
+
+        int val = 0xfedcba98;
+        char str[] = "00000000\0";
+        char exp_str[] = "fedcba98\0";
+        secp256k1_u32_to_string(val, str);
+        CuAssertStrEquals_Msg(tc, "str != exp_str", exp_str, str);
+}
+
+void Test_secp256k1_u32_to_string_2a(CuTest *tc){
+
+        int val = 0xfedcba98;
+        char str[9] = {0};
+        char exp_str[] = "fedcba98\0";
+        secp256k1_u32_to_string(val, str);
+        CuAssertStrEquals_Msg(tc, "str != exp_str", exp_str, str);
+}
+
+
+void Test_secp256k1_u32_to_string_3(CuTest *tc){
+
+        int val = 0x41424344;
+        char str[] = "00000000";
+        char exp_str[] = "41424344\0";
+        secp256k1_u32_to_string(val, str);
+        CuAssertStrEquals_Msg(tc, "str != exp_str", exp_str, str);
+}
+
+void Test_secp256k1_u64_to_string_1(CuTest *tc){
+
+        long long val = 0xfedcba9876543210;
+        char str[] = "0000000000000000\0";
+        char exp_str[] = "fedcba9876543210\0";
+        secp256k1_u64_to_string(val, str);
+        CuAssertStrEquals_Msg(tc, "str != exp_str", exp_str, str);
+}
+
+void Test_secp256k1_u64_to_string_2(CuTest *tc){
+
+        long long val = 0xabbadeadbabecafe;
+        char str[17] = {0};
+        char exp_str[] = "abbadeadbabecafe\0";
+        secp256k1_u64_to_string(val, str);
+        CuAssertStrEquals_Msg(tc, "str != exp_str", exp_str, str);
+}
+
+
+
+
+
+
+
+
+
+
+
