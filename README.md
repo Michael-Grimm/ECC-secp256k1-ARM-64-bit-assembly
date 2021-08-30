@@ -7,4 +7,4 @@ For better readability of the source code
 
 C-interface for all public assembly functions: secp256k1.h 
 
-The project was developed on a Raspberry Pi 4, 8GB, with ubuntuMATE 20.4
+Developed on a RaspberryPi 4 (Broadcom BCM2711, Quad core Cortex-A72 (ARM v8) 64-bit SoC @ 1.5GHz) with ubuntuMATE 20.4
