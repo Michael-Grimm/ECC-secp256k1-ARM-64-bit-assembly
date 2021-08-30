@@ -2,7 +2,7 @@
 
  Reg |Alias1|Alias2|Alias3|Alias4|Alias5|
  x0  | io0  |      |      |      |      |
- x1  | io1  |      |      |      |   		 |
+ x1  | io1  |      |      |      |      |
  x2  | io2  |      |      |      |      |
  x3  | io4  |      |      |      |      |
  x4  | sa0  |      |      |      |      |
