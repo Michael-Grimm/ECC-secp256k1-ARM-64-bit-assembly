@@ -5,7 +5,6 @@ clear_and_test:
 
 clear:
 	rm -rf ./release/libsecp256k1.a
-	rm -rf ./release/libsecp256k1.a
 	rm -rf ./release/secp256k1.h
 	rm -rf ./*.o
 	
