@@ -422,7 +422,7 @@ void secp256k1_parse_point(const char *str, Point *pt);
  * TODO
  * Parsing a String str into a Signature is not yet implemented.
  */
-void secp256k1_parse_signature(const char *str, Signature *sig);
+//void secp256k1_parse_signature(const char *str, Signature *sig);
 
 
 
