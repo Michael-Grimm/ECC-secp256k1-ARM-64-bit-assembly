@@ -1,22 +1,3 @@
-clear_and_test: 
-	make clear
-	make build
-	make -C ./test test_after_updating_test_suites
-
-clear:
-	rm -rf ./release/libsecp256k1.a
-	rm -rf ./release/secp256k1.h
-	rm -rf ./*.o
-	
-
-test_after_tests_changed: 
-	make build
-	make -C ./test test_after_updating_test_suites
-	
-test_after_code_changed: 
-	make build
-	make -C ./test test_without_updating_test_suites
-
 build: ./release/libsecp256k1.a
 
 ./release/libsecp256k1.a: ./scalar_n.o ./scalar_p.o ./point_p.o ./stringutils.o ./u256.o  ./src/secp256k1.h ./src/aliases ./src/commonmacros
