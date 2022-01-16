@@ -1,27 +1,30 @@
-build: ./release/libsecp256k1.a
+build: libsecp256k1.a
 
-./release/libsecp256k1.a: ./scalar_n.o ./scalar_p.o ./point_p.o ./stringutils.o ./u256.o  ./src/secp256k1.h ./src/aliases ./src/commonmacros
-	ar rcs ./release/libsecp256k1.a  ./scalar_n.o ./scalar_p.o ./point_p.o  ./stringutils.o ./u256.o 
-	cp ./src/secp256k1.h ./release/secp256k1.h
+test: build
+	gcc -o test.out  tests.c libsecp256k1.a
+	./test.out	
+
+libsecp256k1.a: scalar_n.o scalar_p.o point_p.o stringutils.o u256.o  secp256k1.h aliases commonmacros
+	ar rcs libsecp256k1.a  scalar_n.o scalar_p.o point_p.o  stringutils.o u256.o 
 
 
-./point_p.o: ./src/point_p.sx
-	gcc -I./src -c -o ./point_p.o ./src/point_p.sx    
+point_p.o: point_p.sx
+	gcc -c -o point_p.o point_p.sx    
 
 
-./stringutils.o: ./src/stringutils.sx
-	gcc -I./src -c -o ./stringutils.o ./src/stringutils.sx    
+stringutils.o: stringutils.sx
+	gcc -c -o stringutils.o stringutils.sx    
 
-./scalar_n.o: ./src/scalar_n.sx
-	gcc   -I./src -c -o ./scalar_n.o ./src/scalar_n.sx    
+scalar_n.o: scalar_n.sx
+	gcc -c -o scalar_n.o scalar_n.sx    
 
-./scalar_p.o: ./src/scalar_p.sx
-	gcc   -I./src -c -o ./scalar_p.o ./src/scalar_p.sx    
+scalar_p.o: scalar_p.sx
+	gcc   -c -o scalar_p.o scalar_p.sx    
 
-./u256.o: ./src/u256.sx
-	gcc   -I./src -c -o ./u256.o ./src/u256.sx   
-	
+u256.o: u256.sx
+	gcc  -c -o u256.o u256.sx 
 
+ 
 
 
 
