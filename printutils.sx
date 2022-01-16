@@ -1,0 +1,138 @@
+.data
+
+pointASCII:     .quad 0,0,0,0,0,0,0,0
+scalarASCII: 	.quad 0,0,0,0,0,0
+u64ASCII: 		.quad 0,0
+nl: 			.ascii "\n"
+.text
+
+.include "aliases"
+.include "commonmacros" 
+
+/**
+  int print(char* buffer, int buffer_length);
+
+  prints a string to stdout
+  Input: x0 address of char buffer
+  x1: length of string
+  Return value:
+  x0 number of bytes printed
+*/
+BEGIN_C_FUNCTION print
+    mov    x2, x1    //len
+    mov    x1, x0    //buf  
+    mov    x0, #1    //fd := STDOUT_FILENO   
+    mov    w8, #64   //write is syscall #64 
+    svc    #0        //invoke syscall
+END_C_FUNCTION print
+
+/**
+  int printtofile(int fd, char* buffer, int buffer_length);
+
+  prints a string into a file
+  Input: 
+  x0: file descriptor of an open file
+  x1: address of char buffer
+  x2: length of string
+  Return value:
+  x0 number of bytes printed
+*/
+BEGIN_C_FUNCTION printtofile
+    mov    w8, #64   //write is syscall #64 
+    svc    #0        //invoke syscall
+END_C_FUNCTION printtofile
+
+/**
+ Function printU64
+ prints a long long integer value to stdout
+ Input:
+ x0 the integer
+*/
+BEGIN_C_FUNCTION printU64
+    INIT_MSKF1
+    mov sb2, xzr
+    mov sb3, xzr
+	CONVERT_U64_TO_ASCII io0 sb3 sb2
+	adr io1, u64ASCII
+	stp sb2, sb3, [io1]
+	mov io2, #17 //length: 16 chars  +1 for new line  
+	mov io0, #1  //stdout
+	mov w8, #64
+	svc #0
+END_C_FUNCTION printU64
+
+
+BEGIN_C_FUNCTION printScalar
+    adr io1, scalarASCII
+    mov io3, io1  
+    CONVERT_SCALAR_TO_ASCII io0 io3  
+	mov io2, #65 //length: 4x16 chars  +1 for new line  
+	mov io0, #1  //stdout
+	mov w8, #64
+	svc #0
+END_C_FUNCTION printScalar
+
+
+BEGIN_C_FUNCTION printPoint
+    adr io1, pointASCII
+    mov io3, io1  
+    CONVERT_SCALAR_TO_ASCII io0 io3  
+    add io0, io0, #32
+    CONVERT_SCALAR_TO_ASCII io0 io3 
+	mov io2, #129 //length: 8x16 chars  +1 for new line  
+	mov io0, #1  //stdout
+	mov w8, #64
+	svc #0
+END_C_FUNCTION printPoint
+
+
+/**
+  The function read
+  reads a string into a buffer
+  Input:
+  x0 address of buffer
+  x1 length of buffer
+  Return value:
+  x0 number of bytes read
+*/
+BEGIN_C_FUNCTION read
+    mov    x2, x1    //len
+    mov    x1, x0    //buf      
+    mov     x0, #0   //fd := STDIN_FILENO 
+    mov     x8, #63  //read is syscall #63
+    svc     #0
+END_C_FUNCTION read
+
+/**
+  int close(int fd);
+  Closes the file descriptor in x0
+*/
+BEGIN_C_FUNCTION close
+    mov    w8, #57  //close is syscall 57 (0x39)
+    svc    #0        //invoke syscall
+END_C_FUNCTION close
+
+/**
+  int openfile(int dirfd, const char *pathname, int flags, mode_t mode);
+
+*/
+BEGIN_C_FUNCTION openfile
+   mov w8, #56
+   svc #0
+END_C_FUNCTION openfile
+
+
+
+/**
+  int openfileCWD(const char *pathname, int flags, mode_t mode);
+  opens a file in the current working directory
+*/
+BEGIN_C_FUNCTION openfileCWD
+   mov x3, x2
+   mov x2, x1
+   mov x1, x0
+   mov x0, -100 //AT_CWD = -100
+   mov w8, #56
+   svc #0
+END_C_FUNCTION openfileCWD
+

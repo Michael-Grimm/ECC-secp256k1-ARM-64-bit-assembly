@@ -1,0 +1,388 @@
+.text
+
+.include "aliases"
+.include "commonmacros"
+
+/**
+  Macros and functions for parsing Scalar, Point from/into 
+  character arrays.
+*/
+
+/**
+   Helper macros for converting ASCII-Glyphs into integers
+   The input must be a valid hex-character array
+   To avoid looping through the characters the loops are unrolled.
+*/
+.macro CONVERT_CHAR_TO_NIBBLE input accumulator shift  
+           //Input ascii-character array e.g. "fedcba98" is loaded
+           //into 64-bit register in reversed order:  
+           //ASCII glyph '8'  '9'  'a'  'b'  'c'  'd'  'e'  'f' 
+           //In decimal:  56   57   97   98   99  100  101  102
+           //In hex:     0x38 0x39 0x61 0x62 0x63 0x64 0x65 0x66  
+           //Register:   0x3839616263646566  ASCII-glyph  "89abcdef"
+           //Isolate the right most glyph:                "0000000f"      
+           and tmp0, \input, 0xFF    //register:  0x0000000000000066  
+                                         
+           //Testing for lower/upper case hex-characters and digits
+           cmp tmp0, 70 //'F': dec 70, hex 0x46
+           bhi is_lower_case\@  // >70 -> 'a','b'... 'f'.
+           cmp tmp0, 57 //'9': dec 57, hex 0x39 
+           bhi is_upper_case\@ // >57 -> 'A','B' etc.
+           //at this point the char represents a digit '0'...'9' 
+           sub tmp0, tmp0, 48 //'0': dec 48, hex 0x30               
+           b is_converted\@
+           is_lower_case\@:
+           sub tmp0, tmp0, 87 //'a': dec 97, hex 0x61, minus 10 = 87   
+           b is_converted\@
+           is_upper_case\@:
+           sub tmp0, tmp0, 55  //'A': dec 65, hex 0x41, minus 10 = 55
+           is_converted\@:
+           //shift value at the right place in the accumulator register
+                                    //  glyph:             "f0000000" 
+                                    //  register: 0x6600000000000000            
+           orr \accumulator, \accumulator, tmp0, lsl \shift 
+           lsr \input, \input, 8	//right shift next char in place: "089abcde"
+.endm
+
+.macro CONVERT_CHARS_TO_LONG_LONG msi lsi accumulator
+           mov \accumulator, xzr
+           //16 ascii characters need two 64-bit registers
+           //msi: most significant int, lsi: least significant int
+           //input "fedcba9876543210" -> msi: 89abcdef lsi: 01234567
+           								  //accumulator: 0000000000000000 
+		   CONVERT_CHAR_TO_NIBBLE \msi \accumulator 60 //f000000000000000
+           CONVERT_CHAR_TO_NIBBLE \msi \accumulator 56 //fe00000000000000
+		   CONVERT_CHAR_TO_NIBBLE \msi \accumulator 52 //fed0000000000000
+		   CONVERT_CHAR_TO_NIBBLE \msi \accumulator 48 //....
+		   CONVERT_CHAR_TO_NIBBLE \msi \accumulator 44
+		   CONVERT_CHAR_TO_NIBBLE \msi \accumulator 40
+		   CONVERT_CHAR_TO_NIBBLE \msi \accumulator 36
+		   CONVERT_CHAR_TO_NIBBLE \msi \accumulator 32 //fedcba9800000000
+		   
+		   CONVERT_CHAR_TO_NIBBLE \lsi \accumulator 28 //fedcba9870000000
+           CONVERT_CHAR_TO_NIBBLE \lsi \accumulator 24 //....
+		   CONVERT_CHAR_TO_NIBBLE \lsi \accumulator 20
+		   CONVERT_CHAR_TO_NIBBLE \lsi \accumulator 16
+		   CONVERT_CHAR_TO_NIBBLE \lsi \accumulator 12
+		   CONVERT_CHAR_TO_NIBBLE \lsi \accumulator  8
+		   CONVERT_CHAR_TO_NIBBLE \lsi \accumulator  4
+		   CONVERT_CHAR_TO_NIBBLE \lsi \accumulator  0 //fedcba9876543210
+.endm
+
+/**
+The C compatible function secp256k1_parse_u64
+ parses a hex-string (with a fixed length of 16 chars) into an u64 int (unsigned long long int).
+ Input:
+ io0: Address of a character array with a length of 16 characters: e.g. "fedcba9876543210"
+ The chars must be valid hex-characters: '0'...'9','a'...'f' or 'A'...'F'
+ Upper and lower casee can be mixed: "fEdcBa9876543210"
+ There is no check for invalid chars.
+ Output:
+ io0 unsigned long long integer // 0xfedcba9876543210
+*/
+BEGIN_C_FUNCTION secp256k1_parse_u64
+           ldp io3, io2, [io0]             
+           mov io0, xzr 			              						
+           CONVERT_CHARS_TO_LONG_LONG io3 io2 io0
+           end_parse:
+END_C_FUNCTION secp256k1_parse_u64
+
+// io0 Address of a character-array with a length of 4x16 characters (without \0).
+// io1 Address of Scalar.
+
+.macro PARSE_SCALAR arr=io0 scal=io1
+           mov tmp4, \scal
+           ldp sr1, sr0, [\arr], #16
+           ldp sr3, sr2, [\arr], #16
+           ldp sr5, sr4, [\arr], #16
+           ldp sr7, sr6, [\arr], #16 //increment is necessary, if function is called again
+           mov tmp5, \arr
+           CONVERT_CHARS_TO_LONG_LONG sr1 sr0 io0
+           CONVERT_CHARS_TO_LONG_LONG sr3 sr2 io1
+           CONVERT_CHARS_TO_LONG_LONG sr5 sr4 io2
+           CONVERT_CHARS_TO_LONG_LONG sr7 sr6 io3
+           stp io3, io2, [tmp4], #16
+           stp io1, io0, [tmp4], #16 //incrementing in case function is called again
+           mov \scal, tmp4 //memory address after this scalar
+           mov \arr, tmp5 //actual position in char-array
+.endm
+
+/**
+The function secp256k1_parse_Scalar
+ parses a hex-string into a Scalar.
+ Input:
+ io0 Address of a character-array with a length of 4x16=64 characters (without \0).
+ io1 Resulting Scalar.
+*/
+BEGIN_C_FUNCTION secp256k1_parse_scalar
+			PARSE_SCALAR
+END_C_FUNCTION secp256k1_parse_scalar
+
+/*
+ The function secp256k1_parse_Point
+ parses a String into a Point.
+ If a string starts with the two characters '04', it contains both x and y 
+ coordinates and has a total length of 66 chars.
+ '03' and '02' contain only the x coordinate, with a total length of 34 chars.
+ The y coordinate is calculated  from x. 
+ '03' signals an odd, '02' an even y coordinate.
+ String lengths less than the expected length cause errors or unexpected results.
+ Input: 
+ io0: Address of char-array. 
+ io1: Address of Point
+*/
+BEGIN_C_FUNCTION secp256k1_parse_point
+        INIT_PRIME_P
+        mov tmp1, io1 //address of x-coordinate in point into tmp1
+		//Load first 2 chars containing "04", "03" or "02"
+		ldr  io2, [io0], #2    //contains for example 0x23456789abcdef04
+		and  io2, io2, #0xffff //0x0000000000000004 
+		mov tmp2, io2
+		//tmp2 contains now the ASCII hex values of the leading two chars:
+		//'04'= 0x3430 or '03' = 0x3330 or '02' = 0x3230
+        PARSE_SCALAR io0 io1   
+        //x-coordinate is stored in the point. 
+        //io1 points now to y-coordinate in point.
+        //Now handle y.
+        //the address of y in point is in io1, 
+        //the address of x in point is in tmp1
+        
+        mov tmp3, #0x3430 //'04'
+        cmp tmp2, tmp3 //is y present in char array?
+        beq y_is_present_in_char_array
+        
+        PUSH io1 //Save address of y-cordinate in point
+        //test_parity
+        mov tmp3, #0x3330 //'03'= odd
+        cmp tmp2, tmp3 //odd y expected?
+        beq odd_expected
+        //even
+        LOAD_A tmp1
+        bl get_even_y_coordinate_from_x_coordinate
+        POP io0
+        STORE_A io0
+        b end_parse_point
+        //odd
+        odd_expected:
+        LOAD_A tmp1
+        bl get_odd_y_coordinate_from_x_coordinate
+        POP io0
+        STORE_A io0
+        b end_parse_point
+      
+        y_is_present_in_char_array:
+        PARSE_SCALAR io0 io1 //point.y
+        end_parse_point:
+END_C_FUNCTION secp256k1_parse_point
+
+
+
+
+
+/**
+ * The function secp256k1_u32_to string
+ * converts a 32-bit-integer to ascii char array of 8 bytes.
+ * Input: 
+ * int val in x0
+ * Output:
+ * String at address in x1
+ */
+BEGIN_C_FUNCTION secp256k1_u32_to_string
+    INIT_MSKF1
+    mov x3, xzr
+	CONVERT_U32_TO_ASCII x0 x3 
+    str x3, [x1]
+END_C_FUNCTION secp256k1_u32_to_string
+
+
+
+
+/**
+ * The function secp256k1_u64_to string
+ * converts a 64-bit-integer to ascii char array of 16 bytes.
+ * Input: 
+ * long long val in io0
+ * Output:
+ * Address of buffer for the resulting ASCII characters in io1
+ */
+BEGIN_C_FUNCTION secp256k1_u64_to_string
+    INIT_MSKF1
+    mov sb2, xzr
+    mov sb3, xzr
+	CONVERT_U64_TO_ASCII io0 sb3 sb2
+	stp sb2, sb3, [io1]
+END_C_FUNCTION secp256k1_u64_to_string
+
+
+
+/**
+ * The function secp256k1_scalar_to_string
+ * converts a Scalar to a ASCII string with 64 chars.
+ * Input:
+ * Address of Scalar in io0
+ * Output:
+ * Address of buffer for the resulting ASCII characters in io1
+ */
+BEGIN_C_FUNCTION secp256k1_scalar_to_string
+    CONVERT_SCALAR_TO_ASCII io0 io1
+END_C_FUNCTION secp256k1_scalar_to_string
+
+/**
+ * The macro ASCIIZ_LENGTH determines the length of a zero-terminated char-array
+ */
+.macro ASCIIZ_LENGTH buffer count w_temp 
+    mov \count, xzr
+	loopasciiz\@:
+	ldrb \w_temp, [\buffer], #1
+    and \w_temp, \w_temp, #0xff
+    cbz \w_temp, endasciizlength\@
+    add \count, \count, #1
+    b loopasciiz\@
+    endasciizlength\@:
+.endm
+
+
+/**
+ * int asciiz_length(char *array)
+ * The function asciiz_length
+ * determines the length of a zero terminated char-array.
+ * Input: address of char-array
+ * Returns the length of the string excluding the terminating zero.
+ */
+BEGIN_C_FUNCTION asciiz_length
+    ASCIIZ_LENGTH x0 x1 w2
+    mov x0, x1
+END_C_FUNCTION asciiz_length
+
+
+/**
+ * Macros and functions for converting a long long integer into an
+ * ASCII-string for a given base (radix)
+ */
+
+
+/**
+ * Macro COUNT_DIGITS 
+ * calculates the number of ASCII-digits for a given base for a long long integer
+ */
+.macro COUNT_DIGITS value radix result 
+	    mov \result, xzr 
+		loop_dec\@:
+		add \result, \result, #1
+		udiv \value, \value, \radix
+	    cbnz \value, loop_dec\@
+.endm
+
+
+
+
+/**
+ * int count_decimals(unsigned long long val);
+ * Returns the number of decimal characters for val.
+ * Example: 0xFFFF = 65535 in decimal => 5 chars.
+ * 0xabbafefedeadcafe = 12374483296764939006 => 20 chars.
+ */
+BEGIN_C_FUNCTION count_decimals
+        mov x1, #10
+	    COUNT_DIGITS x0 x1 x2
+        mov x0, x2
+END_C_FUNCTION count_decimals
+
+
+
+/**
+ * int count_chars(unsigned long long val, int base);
+ * Returns the number of necessary ascii characters for representing val in the 
+ * given base (radix).
+ * Examples: 0xFFFF = 65535 in decimal => 5 chars.
+             0x177  = 567   in octal   => 3 chars
+ *           0xabbafefedeadcafe = 12374483296764939006 => 20 chars.
+ */
+BEGIN_C_FUNCTION count_chars
+	    COUNT_DIGITS x0 x1 x2
+        mov x0, x2
+END_C_FUNCTION count_chars
+
+
+
+.section .rodata
+//Base 85 encoding (RFC 1924)
+base85: .ascii "0123456789ABCDEFGHIJKLMNOPQRSTUV" //
+        .ascii "WXYZabcdefghijklmnopqrstuvwxyz!#"
+        .ascii "$%&()*+-;<=>?@^_`{|}~\0\0\0\0\0\0\0\0\0\0\0" 
+.text
+
+
+
+//int u64_to_ascii(long long value, int base, char *buf);
+//  x0                    x0            x1         x2
+.macro CONVERT_TO_ASCII
+       adr x8, base85 
+       mov x5, x0             //copy of value for later use in conversionloop 
+       COUNT_DIGITS x0 x1 x3  //number of necessary digits in x3
+       add x2, x2, x3         //add number of bytes to address of buffer
+       conversionloop\@:
+       udiv x7, x5, x1 //quotient in x7
+       mul  x6, x7, x1 //quotient*base
+       sub  x4, x5, x6 //rest in x4	   
+       ldrb w4, [x8, w4, uxtw] //x4=10 => x4='a'
+       strb w4, [x2, #-1]!
+       mov  x5, x7     //quotient is new 'value'
+       cbnz x5, conversionloop\@ 
+       mov x0, x3
+.endm
+
+/**
+ * int u64_to_decimal(long long value, char *buf);
+ writes the value as decimal string into buf.
+ buf must at least have a length of 21 bytes (20 for the max-value of u64 plus 1 für zero-termination.)
+ */
+BEGIN_C_FUNCTION u64_to_decimal 
+       mov x2, x1
+       mov x1, #10  
+       CONVERT_TO_ASCII
+END_C_FUNCTION u64_to_decimal
+
+/**
+ * int u64_to_ascii(long long value, int base, char *buf);
+ * writes the value as ascii string in the given base (radix) into buf.
+ * base can have a value between 2 and 85.
+ * buf must have a proper length to accommodate the ascii-string (and a 
+ * terminating zero if needed):
+ * For the maximum of long long:
+ * Base 2: 64 bytes  "111111111111111111111111111111111111111111111111111111111111"
+ * Base 8: 22 bytes  "1777777777777777777777"
+ * Base 10: 20 bytes "18446744073709551615"
+ * Base 16: 16 bytes "FFFFFFFFFFFFFFFF"
+ * Base 32 ext hex: 13 bytes "FVVVVVVVVVVVV"
+ * Base 85: 10 bytes "_sw2=@*|O0" 
+ * See also: int count_chars(long long val, int base);
+ * This function uses the Base 85 alphabet (RFC 1924) which includes the 
+ * base32hex (base 32 extended hex) alphabet (RFC 2938):   
+ * 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!#$%&()*+-;<=>?@^_`{|}~
+ * Returns the number of characters written to buf.
+ */
+BEGIN_C_FUNCTION u64_to_ascii
+       CONVERT_TO_ASCII
+END_C_FUNCTION u64_to_ascii
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
